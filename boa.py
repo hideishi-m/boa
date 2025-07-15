@@ -212,7 +212,7 @@ def main() -> None:
         logger.setLevel(args.loglevel)
         logger.info(f'loglevel={args.loglevel!r}')
 
-    if not args.input:
+    if not hasattr(args, 'input'):
         args.input = {
             'args': {
                 option: getattr(args, option) for option in options
