@@ -1,0 +1,202 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the argparse package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: argparse\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 21:50+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 722
+#, python-format
+msgid " (default: %(default)s)"
+msgstr " (デフォルト: %(default)s)"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 228
+#, python-format
+msgid "%(heading)s:"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2650
+#, python-format
+msgid "%(prog)s: error: %(message)s\n"
+msgstr "%(prog)s: エラー: %(message)s\n"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2541
+#, python-format
+msgid "%r is not callable"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1583
+msgid "'required' is an invalid argument for positionals"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 890
+msgid ".__call__() not defined"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2030
+#, python-format
+msgid "ambiguous option: %(option)s could match %(matches)s"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1323
+#, python-format
+msgid "argument \"-\" with mode %r"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 784
+#, python-format
+msgid "argument %(argument_name)s: %(message)s"
+msgstr "引数 %(argument_name)s: %(message)s"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1332
+#, python-format
+msgid "can't open '%(filename)s': %(error)s"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1854
+msgid "cannot have multiple subparser arguments"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1541
+#, python-format
+msgid "cannot merge actions - two groups are named %r"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1657
+#, python-format
+msgid "conflicting option string: %s"
+msgid_plural "conflicting option strings: %s"
+msgstr[0] ""
+msgstr[1] ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1227
+#, python-format
+msgid "conflicting subparser alias: %s"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1223
+#, python-format
+msgid "conflicting subparser: %s"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1622
+#, python-format
+msgid "dest= is required for options like %r"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2295
+#, python-format
+msgid "expected %s argument"
+msgid_plural "expected %s arguments"
+msgstr[0] ""
+msgstr[1] ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2291
+msgid "expected at least one argument"
+msgstr "少なくとも1つの引数が必要です"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2290
+msgid "expected at most one argument"
+msgstr "引数は最大で1つまでです"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2289
+msgid "expected one argument"
+msgstr "引数が1つ必要です"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2062
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2094
+#, python-format
+msgid "ignored explicit argument %r"
+msgstr "明示的な引数 %r を無視しました"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2557
+#, python-format
+msgid "invalid %(type)s value: %(value)r"
+msgstr "不正な %(type)s の値です: %(value)r"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2572
+#, python-format
+msgid "invalid choice: %(value)r (choose from %(choices)s)"
+msgstr "不正な選択です: %(value)r (%(choices)s から選択)"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1639
+#, python-format
+msgid "invalid conflict_resolution value: %r"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1604
+#, python-format
+msgid "invalid option string %(option)r: must start with a character %(prefix_chars)r"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1731
+msgid "mutually exclusive arguments must be optional"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2011
+#, python-format
+msgid "not allowed with argument %s"
+msgstr "引数 %s と同時に指定できません"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2245
+#, python-format
+msgid "one of the arguments %s is required"
+msgstr "%s のうちでいずれかの引数が必須です"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1808
+msgid "options"
+msgstr "オプション"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1807
+msgid "positional arguments"
+msgstr "位置引数"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1161
+msgid "show program's version number and exit"
+msgstr "プログラムのバージョン番号を表示して終了"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1823
+msgid "show this help message and exit"
+msgstr "このヘルプを表示して終了"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1860
+msgid "subcommands"
+msgstr "サブコマンド"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2230
+#, python-format
+msgid "the following arguments are required: %s"
+msgstr "次の引数は必須です: %s"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2405
+#, python-format
+msgid "unexpected option string: %s"
+msgstr "予期しないオプション文字列です: %s"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1262
+#, python-format
+msgid "unknown parser %(parser_name)r (choices: %(choices)s)"
+msgstr ""
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1906
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2459
+#, python-format
+msgid "unrecognized arguments: %s"
+msgstr "不明な引数です: %s"
+#
+# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 299
+msgid "usage: "
+msgstr "使用法: "

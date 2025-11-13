@@ -1,0 +1,162 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the boa package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: boa\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-13 13:36+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+#
+# File: boa/__init__.py, line: 491
+msgid "critical"
+msgstr "クリティカル値"
+#
+# File: boa/__init__.py, line: 510
+msgid "criticals"
+msgstr "総クリティカル数"
+#
+# File: boa/__init__.py, line: 508
+msgid "elapsed_time"
+msgstr "経過時間"
+#
+# File: boa/__init__.py, line: 512
+msgid "failures"
+msgstr "総失敗数"
+#
+# File: boa/__init__.py, line: 492
+msgid "fumble"
+msgstr "ファンブル値"
+#
+# File: boa/__init__.py, line: 513
+msgid "fumbles"
+msgstr "総ファンブル数"
+#
+# File: boa/__init__.py, line: 488
+msgid "input"
+msgstr "入力"
+#
+# File: boa/__init__.py, line: 239
+msgid "input INI file"
+msgstr "入力 INI ファイル"
+#
+# File: boa/__init__.py, line: 251
+#, python-format
+msgid "invalid choice in section=%(section)r, option=%(option)r: %(value)r (choose from %(choices)s)"
+msgstr "セクション=%(section)r, オプション=%(option)r に不正な選択です: %(value)r (%(choices)s から選択)"
+#
+# File: boa/__init__.py, line: 243
+#, python-format
+msgid "invalid int value in section=%(section)r, option=%(option)r: %(value)r"
+msgstr "セクション=%(section)r, オプション=%(option)r に不正な int の値です: %(value)r"
+#
+# File: boa/__init__.py, line: 311
+msgid "log_level"
+msgstr "ロギングレベル"
+#
+# File: boa/__init__.py, line: 230
+msgid "mandatory arguments"
+msgstr "必須の引数"
+#
+# File: boa/__init__.py, line: 265
+#, python-format
+msgid "opponent's %s"
+msgstr "相手の%s"
+#
+# File: boa/__init__.py, line: 494
+msgid "opponent_critical"
+msgstr "相手のクリティカル値"
+#
+# File: boa/__init__.py, line: 514
+msgid "opponent_criticals"
+msgstr "相手の総クリティカル数"
+#
+# File: boa/__init__.py, line: 493
+msgid "opponent_roll"
+msgstr "相手の判定数"
+#
+# File: boa/__init__.py, line: 515
+msgid "opponent_successes"
+msgstr "相手の総成功数"
+#
+# File: boa/__init__.py, line: 496
+msgid "output"
+msgstr "出力"
+#
+# File: boa/__init__.py, line: 251
+msgid "output JSON file"
+msgstr "出力 JSON ファイル"
+#
+# File: boa/__init__.py, line: 497
+msgid "p(criticals)"
+msgstr "クリティカルの確率"
+#
+# File: boa/__init__.py, line: 499
+msgid "p(failures)"
+msgstr "失敗の確率"
+#
+# File: boa/__init__.py, line: 500
+msgid "p(fumbles)"
+msgstr "ファンブルの確率"
+#
+# File: boa/__init__.py, line: 501
+msgid "p(opponent_criticals)"
+msgstr "相手のクリティカルの確率"
+#
+# File: boa/__init__.py, line: 503
+msgid "p(opponent_successes)"
+msgstr "相手の成功の確率"
+#
+# File: boa/__init__.py, line: 498
+msgid "p(successes)"
+msgstr "成功の確率"
+#
+# File: boa/__init__.py, line: 490
+msgid "roll"
+msgstr "判定数"
+#
+# File: boa/__init__.py, line: 509
+msgid "rolls"
+msgstr "総判定数"
+#
+# File: boa/__init__.py, line: 224
+msgid "set logging level"
+msgstr "ログレベルを設定します"
+#
+# File: boa/__init__.py, line: 228
+msgid "set number of multiprocessing workers"
+msgstr "マルチプロセスワーカーの数を設定します"
+#
+# File: boa/__init__.py, line: 506
+msgid "stats"
+msgstr "統計情報"
+#
+# File: boa/__init__.py, line: 511
+msgid "successes"
+msgstr "総成功数"
+#
+# File: boa/__init__.py, line: 489
+msgid "target"
+msgstr "目標値"
+#
+# File: boa/__init__.py, line: 487
+msgid "title"
+msgstr "タイトル"
+#
+# File: boa/__init__.py, line: 507
+msgid "workers"
+msgstr "ワーカー数"
+#
+# File: boa/__init__.py, line: 267
+#, python-format
+msgid "your %s"
+msgstr "あなたの%s"
