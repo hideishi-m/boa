@@ -1,7 +1,8 @@
 #!/bin/sh
 
+STDLIB=`python3.11 -c 'import sysconfig; print(sysconfig.get_path("stdlib"))'`
 
-function pot() {
+pot() {
 	local domain=$1
 	local outdir=boa/locale
 	local lang=ja_JP
@@ -44,4 +45,4 @@ function pot() {
 }
 
 pot boa boa/*.py
-pot argparse /opt/kusanagi/python312/lib64/python3.12/argparse.py
+pot argparse ${STDLIB}/argparse.py
