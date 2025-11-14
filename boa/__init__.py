@@ -44,7 +44,7 @@ def get_gettext(domain: str) -> Callable[[str], str]:
     Returns:
         Callable[[str, sty]: gettext関数 _()
     """
-    locale_path = (Path(__file__) / '../locale').resolve()
+    locale_path = (Path(__file__).parent / 'locale').resolve()
 
     language = os.environ.get('LANG') or 'en_US'  # デフォルトの言語
     # 日本語

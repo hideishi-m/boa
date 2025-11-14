@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boa"
+authors = [
+  { name="Hidenori ISHIKAWA", email="hideishi.magisystem.net@gmail.com" },
+]
+description = "BoA Dice Roll Probability Calculator"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+license = "GPL-2.0-only"
+license-files = ["LICENSE"]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/hideishi-m/boa"
+Issues = "https://github.com/hideishi-m/boa/issues"
+
+[project.scripts]
+boa = "boa:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "boa.__version__" }
+
+[tool.setuptools.package-data]
+boa = [
+  "locale/*/*/*.mo",
+]
