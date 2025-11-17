@@ -38,37 +38,37 @@ def create_zipapp(src: str, dst: str, entry_point: str) -> None:
         dst (str): パッケージ名
         entry_points (str): エントリーポイント
     """
-    import zipapp
     from distutils import log
     from tempfile import NamedTemporaryFile
+    from zipapp import create_archive
     from zipfile import ZipFile
 
+    src_path = Path(src).resolve()
+    dst_path = Path(dst).resolve().with_suffix('.pyz')
+
+    whl_paths = tuple(src_path.glob('*.whl'))
+    if not whl_paths:
+        return
+
     log.info('running create_zipapp')
-    with NamedTemporaryFile(delete=False) as tempfile:
-        try:
-            log.info('creating %r' % tempfile.name)
-            with ZipFile(tempfile, 'w') as pyzip:
-                log.info('adding %r' % '__init__.py')
-                pyzip.writestr('__init__.py', '')
-                log.info('adding %r from %r' % ('__main__.py', entry_point))
-                pyzip.writestr('__main__.py', Path(entry_point).read_bytes())
-                for src_path in Path(src).glob('*.whl'):
-                    log.info('adding %r' % src_path.name)
-                    with ZipFile(src_path, 'r') as src_zip:
-                        for member in src_zip.infolist():
-                            pyzip.writestr(
-                                member.filename, src_zip.read(member))
-                pyzip.close()
-            zipapp.create_archive(
-                tempfile.name,
-                Path(dst).with_suffix('.pyz'),
-                '/usr/bin/env python3.11')
-            log.info('writing %r' % Path(dst).with_suffix('.pyz').name)
-        finally:
-            if Path(tempfile.name).exists():
-                Path(tempfile.name).unlink()
-                log.info('removing %r' % tempfile.name)
-    Path(dst).with_suffix('.pyz').chmod(0o755)
+    with NamedTemporaryFile(delete_on_close=False) as tempfile:
+        log.info('creating %r' % tempfile.name)
+        with ZipFile(tempfile, 'w') as pyzip:
+            log.info('adding %r' % '__init__.py')
+            pyzip.writestr('__init__.py', '')
+            log.info('adding %r from %r' % ('__main__.py', entry_point))
+            pyzip.writestr('__main__.py', Path(entry_point).read_bytes())
+            for whl_path in whl_paths:
+                log.info('adding %r' % whl_path.name)
+                with ZipFile(whl_path, 'r') as whl_zip:
+                    for member in whl_zip.infolist():
+                        pyzip.writestr(
+                            member.filename, whl_zip.read(member))
+            pyzip.close()
+        create_archive(
+            tempfile.name, dst_path, '/usr/bin/env python3.12')
+        dst_path.chmod(0o755)
+        log.info('writing %r' % Path(dst).with_suffix('.pyz').name)
 
 
 setup(package_data={

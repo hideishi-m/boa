@@ -296,7 +296,7 @@ def main() -> None:
         version=f'%(prog)s {__version__}')
     parser.add_argument(
         '--log-level',
-        default=argparse.SUPPRESS,
+        default=logging.getLevelName(logger.getEffectiveLevel()),
         choices=('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'),
         help=_('set logging level'))
     parser.add_argument(
@@ -325,8 +325,10 @@ def main() -> None:
         type=argparse.FileType('r', encoding='utf-8'),
         help=_('input INI file'))
 
+    optional_group = parser.add_argument_group(
+        title=_('optional arguments'))
     for option in OPTIONS[1:]:  # --targetを除く
-        parser.add_argument(
+        optional_group.add_argument(
             '--%s' % option.replace('_', '-'),
             default=getattr(DEFAULTS, option),
             type=int,
@@ -335,7 +337,7 @@ def main() -> None:
                                  getattr(CHOICES, option)[-1]),
             help=getattr(HELPS, option))
 
-    parser.add_argument(
+    optional_group.add_argument(
         '--output',
         default=argparse.SUPPRESS,
         type=argparse.FileType('w', encoding='utf-8'),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: boa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-17 11:56+0900\n"
+"POT-Creation-Date: 2025-11-17 20:51+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,6 +87,10 @@ msgstr "相手の判定数"
 # File: boa/__init__.py, line: 515
 msgid "opponent_successes"
 msgstr "相手の総成功数"
+#
+# File: boa/__init__.py, line: 329
+msgid "optional arguments"
+msgstr "任意の引数"
 #
 # File: boa/__init__.py, line: 496
 msgid "output"

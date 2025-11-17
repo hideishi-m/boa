@@ -1,6 +1,6 @@
 #!/bin/sh
 
-STDLIB=`python3.11 -c 'import sysconfig; print(sysconfig.get_path("stdlib"))'`
+STDLIB=`python3.12 -c 'import sysconfig; print(sysconfig.get_path("stdlib"))'`
 
 pot() {
 	local domain=$1
