@@ -53,11 +53,8 @@ def get_gettext(domain: str) -> Callable[[str], str]:
 
     with as_file(locale_traversable) as locale_path:
         translation = gettext.translation(
-            domain,
-            localedir=str(locale_path),
-            languages=(language,),
-            fallback=True,
-        )
+            domain, localedir=str(locale_path), languages=(language,),
+            fallback=True)
         return translation.gettext
 
 
@@ -134,10 +131,11 @@ def trace(fn: Callable) -> Callable:
                 return fn(*args, **kwargs)
         finally:
             logger.debug('%s():LEAVE' % fn.__qualname__)
-            logger.info('%(fn)s():%(elapsed_time)s=%(delta)s'
-                        % {'fn': fn.__qualname__,
-                           'elapsed_time': _('elapsed_time'),
-                           'delta': timedelta(seconds=timer())})
+            logger.info(
+                '%(fn)s():%(elapsed_time)s=%(delta)s'
+                % {'fn': fn.__qualname__,
+                   'elapsed_time': _('elapsed_time'),
+                   'delta': timedelta(seconds=timer())})
     return wrapper
 
 
@@ -296,7 +294,7 @@ def main() -> None:
         version=f'%(prog)s {__version__}')
     parser.add_argument(
         '--log-level',
-        default=logging.getLevelName(logger.getEffectiveLevel()),
+        default=argparse.SUPPRESS,
         choices=('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'),
         help=_('set logging level'))
     parser.add_argument(
@@ -344,20 +342,13 @@ def main() -> None:
         help=_('output JSON file'))
     args = parser.parse_args()
 
-    handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter(
-        '%(asctime)s:%(levelname)s:%(name)s:%(process)d:%(message)s'))
-    if not logger.handlers:
-        logger.addHandler(handler)
     if hasattr(args, 'log_level'):
         logger.setLevel(args.log_level)
         logger.info('%s=%r' % (_('log_level'), args.log_level))
 
     if not hasattr(args, 'input'):
         args.input = {
-            'args': {
-                option: getattr(args, option) for option in OPTIONS
-            },
+            'args': {option: getattr(args, option) for option in OPTIONS},
         }
     outcomes = tuple(
         Contest(**config, title=section).execute(args.workers)
@@ -407,9 +398,10 @@ class Contest:
         opponent_fumble: 対抗判定のファンブル値 int
         title: 行為判定の名前 str
     """
-    def __init__(self, target: int, roll: int, critical: int, fumble: int,
-                 opponent_roll: int, opponent_critical: int,
-                 opponent_fumble: int, *, title: str) -> None:
+    def __init__(
+            self, target: int, roll: int, critical: int, fumble: int,
+            opponent_roll: int, opponent_critical: int,
+            opponent_fumble: int, *, title: str) -> None:
         """
         初期化
 
