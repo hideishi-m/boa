@@ -2,6 +2,7 @@ __pycache__
 dist
 *.ini
 *.json
+*.mo
 *.pot
 *.egg-info
 *~

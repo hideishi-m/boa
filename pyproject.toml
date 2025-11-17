@@ -27,8 +27,3 @@ boa = "boa:main"
 
 [tool.setuptools.dynamic]
 version = { attr = "boa.__version__" }
-
-[tool.setuptools.package-data]
-boa = [
-  "locale/*/*/*.mo",
-]

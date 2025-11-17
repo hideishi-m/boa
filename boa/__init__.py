@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import configparser
-import contextlib
-import datetime
-import functools
 import gettext
-import itertools
 import json
 import logging
 import os
 import time
+from configparser import ConfigParser
 from concurrent.futures import ProcessPoolExecutor
+from contextlib import AbstractContextManager, contextmanager
 from collections.abc import Callable, Iterator
-from pathlib import Path
+from datetime import timedelta
+from functools import wraps
+from importlib.resources import files, as_file
+from itertools import islice, product
 from typing import Any, NamedTuple, TypeAlias
 
 __all__ = [
@@ -25,7 +25,7 @@ __version__ = '0.0.1'
 
 
 """
-プログラム名
+パッケージ名
 """
 package_name = __name__.partition('.')[0]
 
@@ -44,20 +44,21 @@ def get_gettext(domain: str) -> Callable[[str], str]:
     Returns:
         Callable[[str, sty]: gettext関数 _()
     """
-    locale_path = (Path(__file__).parent / 'locale').resolve()
+    locale_traversable = files(package_name).joinpath('locale')
 
     language = os.environ.get('LANG') or 'en_US'  # デフォルトの言語
     # 日本語
     if 'ja' == language or language.startswith('ja_JP'):
         language = 'ja_JP'
 
-    translation = gettext.translation(
-        domain,
-        localedir=str(locale_path),
-        languages=(language,),
-        fallback=True,
-    )
-    return translation.gettext
+    with as_file(locale_traversable) as locale_path:
+        translation = gettext.translation(
+            domain,
+            localedir=str(locale_path),
+            languages=(language,),
+            fallback=True,
+        )
+        return translation.gettext
 
 
 """
@@ -99,8 +100,8 @@ def getLogger(name: str) -> logging.Logger:
 logger = getLogger(package_name)
 
 
-@contextlib.contextmanager
-def benchmark() -> Callable[[], float]:
+@contextmanager
+def benchmark() -> AbstractContextManager[Callable[[], float]]:
     """
     経過時間を測定するコンテキストマネージャ
 
@@ -125,7 +126,7 @@ def trace(fn: Callable) -> Callable:
     DEBUG: 関数のENTER/LEAVEを表示
     INFO: 関数の経過時間を表示
     """
-    @functools.wraps(fn)
+    @wraps(fn)
     def wrapper(*args, **kwargs) -> Any:
         logger.debug('%s():ENTER' % fn.__qualname__)
         try:
@@ -136,7 +137,7 @@ def trace(fn: Callable) -> Callable:
             logger.info('%(fn)s():%(elapsed_time)s=%(delta)s'
                         % {'fn': fn.__qualname__,
                            'elapsed_time': _('elapsed_time'),
-                           'delta': datetime.timedelta(seconds=timer())})
+                           'delta': timedelta(seconds=timer())})
     return wrapper
 
 
@@ -226,7 +227,7 @@ class InputAction(argparse.Action):
         """
         configs = dict()
         try:
-            config = configparser.ConfigParser(defaults=DEFAULTS._asdict())
+            config = ConfigParser(defaults=DEFAULTS._asdict())
             config.read_file(values)
             values.close()
             for section in config.sections():
@@ -436,7 +437,7 @@ class Contest:
         Returns:
             行為判定のダイスのパターンのイテレータ
         """
-        return itertools.product(D20, repeat=self.roll + self.opponent_roll)
+        return product(D20, repeat=self.roll + self.opponent_roll)
 
     def generate_iterator(self, workers: int) -> Iterator[Iterator[Role]]:
         """
@@ -448,7 +449,7 @@ class Contest:
         Returns:
             "行為判定のダイスのパターンのイテレータ" のイテレータ
         """
-        return (itertools.islice(self.generate(), n, None, workers)
+        return (islice(self.generate(), n, None, workers)
                 for n in range(workers))
 
     def contest(self, roll: Role) -> Result:
@@ -560,7 +561,7 @@ class Contest:
                     opponent_criticals, opponent_successes \
                     = self.map_reduce(self.generate())
 
-        delta = datetime.timedelta(seconds=timer())
+        delta = timedelta(seconds=timer())
         logger.info('%s=%s' % (_('elapsed_time'), delta))
 
         assert rolls == (criticals + successes + failures + fumbles
@@ -598,5 +599,9 @@ class Contest:
                 _('opponent_successes'): opponent_successes,
             },
         }
+        assert (
+            criticals + successes + failures + fumbles
+            + opponent_criticals + opponent_successes) \
+            == rolls, _('verification')
         print(json.dumps(outcome, ensure_ascii=False, indent=2))
         return outcome

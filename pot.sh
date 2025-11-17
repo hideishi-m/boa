@@ -9,7 +9,7 @@ pot() {
 	shift
 	xgettext \
 		--output=${domain}.pot \
-		--output-dir=${outdir} \
+		--output-dir=${outdir}/${lang}/LC_MESSAGES \
 		--language=Python \
 		--from-code=UTF-8 \
 		--strict \
@@ -18,7 +18,7 @@ pot() {
 		--package-name=${domain} \
 		$@
 
-	if [ -f ${outdir}/${domain}.po ]; then
+	if [ -f ${outdir}/${lang}/LC_MESSAGES/${domain}.po ]; then
 		msgmerge \
 			--update \
 			--strict \
@@ -26,22 +26,25 @@ pot() {
 			--no-fuzzy-matching \
 			--no-wrap \
 			--verbose \
-			${outdir}/${domain}.po ${outdir}/${domain}.pot
+			${outdir}/${lang}/LC_MESSAGES/${domain}.po \
+			${outdir}/${lang}/LC_MESSAGES/${domain}.pot
 		if [ "$1" == '--obsolete' ]; then
 			msgattrib \
 				--no-obsolete \
-				--output-file=${outdir}/${domain}.po \
-				${outdir}/${domain}.po
+				--output-file=${outdir}/${lang}/LC_MESSAGES/${domain}.po \
+				${outdir}/${lang}/LC_MESSAGES/${domain}.po
 		fi
 	else
-		cp ${outdir}/${domain}.pot ${outdir}/${domain}.po
+		cp \
+			${outdir}/${lang}/LC_MESSAGES/${domain}.pot \
+			${outdir}/${lang}/LC_MESSAGES/${domain}.po
 	fi
 
 	msgfmt \
 		--output=${outdir}/${lang}/LC_MESSAGES/${domain}.mo \
 		--check-format \
 		--check-domain \
-		${outdir}/${domain}.po
+		${outdir}/${lang}/LC_MESSAGES/${domain}.po
 }
 
 pot boa boa/*.py

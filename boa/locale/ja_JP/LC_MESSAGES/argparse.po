@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: argparse\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-29 21:50+0900\n"
+"POT-Creation-Date: 2025-11-17 11:43+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -171,10 +171,6 @@ msgstr "プログラムのバージョン番号を表示して終了"
 # File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1823
 msgid "show this help message and exit"
 msgstr "このヘルプを表示して終了"
-#
-# File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 1860
-msgid "subcommands"
-msgstr "サブコマンド"
 #
 # File: /opt/kusanagi/python312/lib64/python3.12/argparse.py, line: 2230
 #, python-format
