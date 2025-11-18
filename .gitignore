@@ -1,7 +1,6 @@
 __pycache__
+build
 dist
-*.ini
-*.json
 *.mo
 *.pot
 *.egg-info

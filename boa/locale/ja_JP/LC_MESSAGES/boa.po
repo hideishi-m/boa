@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: boa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-17 20:51+0900\n"
+"POT-Creation-Date: 2025-11-18 15:02+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+#
+# File: boa/__init__.py, line: 292
+#, python-format
+msgid "Unknown option %s"
+msgstr "不明なオプション %s"
 #
 # File: boa/__init__.py, line: 491
 msgid "critical"
@@ -79,6 +84,10 @@ msgstr "相手のクリティカル値"
 # File: boa/__init__.py, line: 514
 msgid "opponent_criticals"
 msgstr "相手の総クリティカル数"
+#
+# File: boa/__init__.py, line: 646
+msgid "opponent_fumble"
+msgstr "相手のファンブル値"
 #
 # File: boa/__init__.py, line: 493
 msgid "opponent_roll"

@@ -5,9 +5,10 @@ import gettext
 import json
 import logging
 import os
+import re
 import time
-from configparser import ConfigParser
 from concurrent.futures import ProcessPoolExecutor
+from configparser import ConfigParser
 from contextlib import AbstractContextManager, contextmanager
 from collections.abc import Callable, Iterator
 from datetime import timedelta
@@ -206,10 +207,17 @@ HELPS = Options(
 )
 
 
+"""
+-/+表記の正規表現
+"""
+MODIFIER_PATTERN = re.compile(r'[-+]\d+')
+
+
 class InputAction(argparse.Action):
     """
     --inputオプションを処理するargparse.Actionクラス
     """
+
     def __call__(self, parser, namespace, values, option_string=None):
         """
         --inputオプションに指定したINIファイルのパスを読み込む
@@ -228,33 +236,101 @@ class InputAction(argparse.Action):
             config = ConfigParser(defaults=DEFAULTS._asdict())
             config.read_file(values)
             values.close()
+
+            # デフォルトを読み込み
+            defaults = dict()
+            try:
+                for option, value in config.defaults().items():
+                    defaults[option] = int(value)
+            except ValueError as error:
+                raise ValueError(
+                    _('invalid int value in section=%(section)r, '
+                      'option=%(option)r: %(value)r')
+                    % {
+                        'section': config.default_section,
+                        'option': option,
+                        'value': value,
+                    }) from error
+
+            # セクションを読み込み
             for section in config.sections():
+                # ファンブルの初期値
+                roll_fumble = opponent_roll_fumble = False
+
                 configs[section] = dict()
                 for option in OPTIONS:
+                    value = config.get(section, option)
                     try:
-                        value = config.get(section, option)
-                        value = int(value)
+                        # 値が+/-の形式
+                        if MODIFIER_PATTERN.match(value):
+                            value = int(value) + defaults[option]
+                            if 'target' == option:
+                                # 最大20
+                                value = min(value, 20)
+                            elif 'roll' == option:
+                                # 判定0以下はファンブル値15
+                                roll_fumble = value < 1
+                                # 最低1
+                                value = max(value, 1)
+                            elif 'critical' == option:
+                                value = max(value, 1)   # 最低1
+                                value = min(value, 19)  # 最大19
+                            elif 'fumble' == option:
+                                value = max(value, 2)   # 最低2
+                                value = min(value, 20)  # 最大20
+                            elif 'opponent_roll' == option:
+                                if int(defaults['opponent_roll']):
+                                    # 判定0以下はファンブル値15
+                                    opponent_roll_fumble = value < 1
+                                    # 判定があれば最低1
+                                    value = max(value, 1)
+                            elif 'opponent_critical' == option:
+                                value = max(value, 1)   # 最低1
+                                value = min(value, 19)  # 最大19
+                            elif 'opponent_fumble' == option:
+                                value = max(value, 2)  # 最低2
+                                value = min(value, 20)  # 最大20
+                            else:
+                                raise ValueError(
+                                    _('Unknown option %s') % option)
+                        # 値が数値の形式
+                        else:
+                            value = int(value)
                     except ValueError as error:
                         raise ValueError(
                             _('invalid int value in section=%(section)r, '
-                              'option=%(option)r: %(value)r') % {
+                              'option=%(option)r: %(value)r')
+                            % {
                                 'section': section,
                                 'option': option,
                                 'value': value,
-                              }) from error
+                            }) from error
                     if value not in getattr(CHOICES, option):
                         raise ValueError(
                             _('invalid choice in section=%(section)r, '
                               'option=%(option)r: %(value)r (choose from '
-                              '%(choices)s)') % {
+                              '%(choices)s)')
+                            % {
                                 'section': section,
                                 'option': option,
                                 'value': value,
                                 'choices': ', '.join(
-                                    map(str, CHOICES[option])),
-                              })
+                                    map(str, getattr(CHOICES, option))),
+                            })
                     configs[section][option] = value
+
+                # ファンブルの調整
+                if roll_fumble:
+                    # 判定0以下はファンブル値15
+                    configs[section]['fumble'] = min(
+                        15, configs[section]['fumble'])
+                if opponent_roll_fumble:
+                    # 判定0以下はファンブル値15
+                    configs[section]['opponent_fumble'] = min(
+                        15, configs[section]['opponent_fumble'])
+
         except Exception as error:
+            logger.exception(error)
             raise argparse.ArgumentError(self, error) from error
         setattr(namespace, self.dest, configs)
 
@@ -570,6 +646,7 @@ class Contest:
                 _('fumble'): self.fumble,
                 _('opponent_roll'): self.opponent_roll,
                 _('opponent_critical'): self.opponent_critical,
+                _('opponent_fumble'): self.opponent_fumble,
             },
             _('output'): {
                 _('p(criticals)'): f'{criticals / rolls:.3%}',
