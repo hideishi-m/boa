@@ -7,14 +7,12 @@ import logging
 import os
 import re
 import time
-from concurrent.futures import ProcessPoolExecutor
+from collections.abc import Callable
 from configparser import ConfigParser
 from contextlib import AbstractContextManager, contextmanager
-from collections.abc import Callable, Iterator
 from datetime import timedelta
 from functools import wraps
-from importlib.resources import files, as_file
-from itertools import islice, product
+from importlib.resources import as_file, files
 from typing import Any, NamedTuple, TypeAlias
 
 __all__ = [
@@ -144,6 +142,40 @@ def trace(fn: Callable) -> Callable:
 D20のダイス目のイテレータ
 """
 D20 = range(1, 21)
+
+
+def count_min_at_least(value: int, dice: int) -> int:
+    """
+    D20をdice個振って、出目の最小値がvalue以上になるパターン数を返す
+
+    diceが0の場合は常に1を返す。出目が空の場合にall()が真になるのと
+    一致する。
+
+    Args:
+        value: 最小値の下限 int
+        dice: ダイス数 int
+
+    Returns:
+        パターン数 int
+    """
+    return (21 - min(max(value, 1), 21)) ** dice
+
+
+def count_min_at_most(value: int, dice: int) -> int:
+    """
+    D20をdice個振って、出目の最小値がvalue以下になるパターン数を返す
+
+    diceが0の場合は常に0を返す。出目が空の場合にany()が偽になるのと
+    一致する。
+
+    Args:
+        value: 最小値の上限 int
+        dice: ダイス数 int
+
+    Returns:
+        パターン数 int
+    """
+    return 20 ** dice - count_min_at_least(value + 1, dice)
 
 
 class Options(NamedTuple):
@@ -340,7 +372,6 @@ def main() -> None:
     引数を解析して、Contestを実行する
 
     --log-level: ロギングレベル str
-    --workers マルチプロセス数 int デフォルト cpu数
 
     以下、排他、かつ、必須
     --target: 目標値 int
@@ -357,8 +388,6 @@ def main() -> None:
     --output: 出力JSONファイル str
     """
 
-    cpus = os.cpu_count()
-
     parser = argparse.ArgumentParser(
         prog=package_name,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -373,13 +402,6 @@ def main() -> None:
         default=argparse.SUPPRESS,
         choices=('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'),
         help=_('set logging level'))
-    parser.add_argument(
-        '--workers',
-        default=cpus,
-        type=int,
-        choices=range(1, cpus + 1),
-        metavar='{1-%d}' % cpus,
-        help=_('set number of multiprocessing workers'))
 
     group = parser.add_argument_group(
         title=_('mandatory arguments'))
@@ -427,17 +449,11 @@ def main() -> None:
             'args': {option: getattr(args, option) for option in OPTIONS},
         }
     outcomes = tuple(
-        Contest(**config, title=section).execute(args.workers)
+        Contest(**config, title=section).execute()
         for section, config in args.input.items())
     if hasattr(args, 'output'):
         json.dump(outcomes, args.output, ensure_ascii=False, indent=2)
         args.output.close()
-
-
-"""
-行為判定のダイスのパターン
-"""
-Role: TypeAlias = tuple[int, ...]
 
 
 """
@@ -458,8 +474,9 @@ class Contest:
     """
     Brade of Arcanaの行為判定を行うクラス
 
-    行為判定のダイス数に応じて全パターンを生成して、
-    成功、失敗、クリティカル、ファンブル等の確率を算出する。
+    行為判定の結果はダイスの最小値だけで決まるので、最小値の分布から
+    成功、失敗、クリティカル、ファンブル等のパターン数を算術的に求めて、
+    確率を算出する。
 
     対抗判定のダイス数 opponent_roll が 0 の場合は、
     自身の行為判定の結果のみで算出する。
@@ -500,114 +517,74 @@ class Contest:
         self.opponent_fumble = opponent_fumble
         self.title = title
 
-    def generate(self) -> Iterator[Role]:
-        """
-        行為判定のダイスの全パターンを生成する
-
-        Returns:
-            行為判定のダイスのパターンのイテレータ
-        """
-        return product(D20, repeat=self.roll + self.opponent_roll)
-
-    def generate_iterator(self, workers: int) -> Iterator[Iterator[Role]]:
-        """
-        行為判定のダイスの全パターンをworker数で分割したイテレータを生成する
-
-        Args:
-            workers: worker数 int
-
-        Returns:
-            "行為判定のダイスのパターンのイテレータ" のイテレータ
-        """
-        return (islice(self.generate(), n, None, workers)
-                for n in range(workers))
-
-    def contest(self, roll: Role) -> Result:
-        """
-        行為判定を行い、行為判定の結果を返す
-
-        Args:
-            roll: 行為判定のダイスのパターン
-
-        Returns:
-            行為判定の結果
-        """
-        your_roll = roll[:self.roll]
-        opponent_roll = roll[self.roll:]
-
-        if all(r >= self.fumble for r in your_roll):
-            # fumble
-            return 0, 0, 0, 1, 0, 0
-        elif any(r <= self.critical for r in your_roll):
-            # critical
-            if all(r >= self.opponent_fumble for r in opponent_roll):
-                # opponent fumble (critical)
-                return 1, 0, 0, 0, 0, 0
-            elif any(r <= self.opponent_critical for r in opponent_roll):
-                # opponent critical
-                return 0, 0, 0, 0, 1, 0
-            else:
-                # critical
-                return 1, 0, 0, 0, 0, 0
-        elif any(r <= self.target for r in your_roll):
-            # success
-            if all(r >= self.opponent_fumble for r in opponent_roll):
-                # opponent fumble (success)
-                return 0, 1, 0, 0, 0, 0
-            elif any(r <= self.opponent_critical for r in opponent_roll):
-                # opponent critical
-                return 0, 0, 0, 0, 1, 0
-            elif any(r <= min(your_roll) for r in opponent_roll):
-                # opponent success
-                return 0, 0, 0, 0, 0, 1
-            else:
-                # success
-                return 0, 1, 0, 0, 0, 0
-        else:
-            # failure
-            return 0, 0, 1, 0, 0, 0
-
-    def reduce(self, iterable: Iterator[Result]) -> Result:
-        """
-        行為判定の結果のイテレータを reduce して単一の結果を返す
-
-        Args:
-            iterable: 行為判定の結果のイテレータ
-
-        Returns:
-            行為判定の結果
-        """
-        results = [0, 0, 0, 0, 0, 0]
-        for result in iterable:
-            results[0] += result[0]  # critical
-            results[1] += result[1]  # success
-            results[2] += result[2]  # failure
-            results[3] += result[3]  # fumble
-            results[4] += result[4]  # opponent critical
-            results[5] += result[5]  # opponent success
-        return results
-
     @trace
-    def map_reduce(self, iterable: Iterator[Role]) -> Result:
+    def count(self) -> Result:
         """
-        行為判定のダイスのパターンのイテレータに対して行為判定を実行する
+        行為判定の結果ごとのダイスのパターン数を算出する
 
-        行為判定の結果は reduce して単一の結果を返す。
+        自身のダイスの出目の最小値を a 、対抗判定のダイスの出目の最小値を b
+        とすると、行為判定の結果は以下の順に判定する。対抗判定のダイス数が
+        0 の場合は、対抗判定は常にファンブルとして扱う。
 
-        Args:
-            iterable: 行為判定のダイスのパターンのイテレータ
+            a >= fumble: ファンブル
+            a <= critical:
+                b >= opponent_fumble: クリティカル
+                b <= opponent_critical: 対抗判定のクリティカル
+                それ以外: クリティカル
+            a <= target:
+                b >= opponent_fumble: 成功
+                b <= opponent_critical: 対抗判定のクリティカル
+                b <= a: 対抗判定の成功
+                それ以外: 成功
+            それ以外: 失敗
 
         Returns:
             行為判定の結果
         """
-        return self.reduce(map(self.contest, iterable))
+        your_rolls = 20 ** self.roll
+        opponent_rolls = 20 ** self.opponent_roll
 
-    def execute(self, workers: int) -> dict:
+        # ファンブルを先に判定するので、クリティカルと成功になる最小値は
+        # ファンブル値未満に限られる
+        critical_limit = min(self.critical, self.fumble - 1)
+        target_limit = min(self.target, self.fumble - 1)
+        opponent_critical_limit = min(
+            self.opponent_critical, self.opponent_fumble - 1)
+
+        your_fumbles = count_min_at_least(self.fumble, self.roll)
+        your_criticals = count_min_at_most(critical_limit, self.roll)
+        your_successes = max(
+            0, count_min_at_most(target_limit, self.roll) - your_criticals)
+        your_failures = (
+            your_rolls - your_fumbles - your_criticals - your_successes)
+
+        opponent_criticals = count_min_at_most(
+            opponent_critical_limit, self.opponent_roll)
+
+        # 自身の最小値 a ごとに、対抗判定が a 以下で成功するパターン数
+        opponent_successes = 0
+        for your_min in range(critical_limit + 1, target_limit + 1):
+            your_patterns = (
+                count_min_at_least(your_min, self.roll)
+                - count_min_at_least(your_min + 1, self.roll))
+            opponent_patterns = max(0, count_min_at_most(
+                min(your_min, self.opponent_fumble - 1),
+                self.opponent_roll) - opponent_criticals)
+            opponent_successes += your_patterns * opponent_patterns
+
+        return (
+            your_criticals * (opponent_rolls - opponent_criticals),
+            your_successes * (opponent_rolls - opponent_criticals)
+            - opponent_successes,
+            your_failures * opponent_rolls,
+            your_fumbles * opponent_rolls,
+            (your_criticals + your_successes) * opponent_criticals,
+            opponent_successes,
+        )
+
+    def execute(self) -> dict:
         """
         行為判定を実行する
-
-        Args:
-            int: マルチプロセス数 int
 
         Returns:
             行為判定の確率の算出結果 dict
@@ -616,20 +593,8 @@ class Contest:
         logger.info('%s=%d' % (_('rolls'), rolls))
 
         with benchmark() as timer:
-            if 1 < workers and 400 < rolls:  # 2D20まではシングルの方が速い
-                logger.info('%s=%d' % (_('workers'), workers))
-                logger.info('%s/%s=%.0f' % (_('rolls'), _('workers'),
-                                            rolls / workers))
-                with ProcessPoolExecutor(max_workers=workers) as executor:
-                    criticals, successes, failures, fumbles, \
-                        opponent_criticals, opponent_successes \
-                        = self.reduce(executor.map(
-                            self.map_reduce, self.generate_iterator(workers)))
-
-            else:
-                criticals, successes, failures, fumbles, \
-                    opponent_criticals, opponent_successes \
-                    = self.map_reduce(self.generate())
+            criticals, successes, failures, fumbles, \
+                opponent_criticals, opponent_successes = self.count()
 
         delta = timedelta(seconds=timer())
         logger.info('%s=%s' % (_('elapsed_time'), delta))
@@ -659,7 +624,6 @@ class Contest:
                 f'{opponent_successes / rolls:.3%}',
             },
             _('stats'): {
-                _('workers'): workers,
                 _('elapsed_time'): str(delta),
                 _('rolls'): rolls,
                 _('criticals'): criticals,

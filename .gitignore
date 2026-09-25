@@ -5,3 +5,4 @@ dist
 *.pot
 *.egg-info
 *~
+.pytest_cache

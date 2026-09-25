@@ -3,6 +3,7 @@
 import subprocess
 from collections.abc import Generator
 from pathlib import Path
+
 from setuptools import setup
 
 
@@ -38,10 +39,11 @@ def create_zipapp(src: str, dst: str, entry_point: str) -> None:
         dst (str): パッケージ名
         entry_points (str): エントリーポイント
     """
-    from distutils import log
     from tempfile import NamedTemporaryFile
     from zipapp import create_archive
     from zipfile import ZipFile
+
+    from distutils import log
 
     src_path = Path(src).resolve()
     dst_path = Path(dst).resolve().with_suffix('.pyz')

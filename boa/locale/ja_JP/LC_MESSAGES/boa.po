@@ -145,10 +145,6 @@ msgstr "総判定数"
 msgid "set logging level"
 msgstr "ログレベルを設定します"
 #
-# File: boa/__init__.py, line: 228
-msgid "set number of multiprocessing workers"
-msgstr "マルチプロセスワーカーの数を設定します"
-#
 # File: boa/__init__.py, line: 506
 msgid "stats"
 msgstr "統計情報"
@@ -168,10 +164,6 @@ msgstr "タイトル"
 # File: boa/__init__.py, line: 604
 msgid "verification"
 msgstr "検算"
-#
-# File: boa/__init__.py, line: 507
-msgid "workers"
-msgstr "ワーカー数"
 #
 # File: boa/__init__.py, line: 267
 #, python-format
